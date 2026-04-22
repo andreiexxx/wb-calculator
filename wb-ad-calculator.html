@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WB Реклама — Калькулятор Pekinski.ru</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+  :root {
+    --bg: #f5f5f0;
+    --bg-accent: #d8f0c8;
+    --bg-accent-2: #c5e8a8;
+    --panel: #ffffff;
+    --panel-soft: #fafaf7;
+    --border: #e8e8e0;
+    --ink: #0d0d0d;
+    --ink-2: #2a2a2a;
+    --muted: #7a7a75;
+    --accent: #a8e063;
+    --accent-dark: #5fb338;
+    --pill: #0d0d0d;
+    --pill-text: #ffffff;
+    --pink: #ff6b9d;
+    --pink-soft: #ffd4e3;
+    --red: #e63946;
+    --red-soft: #ffd9dc;
+    --green: #2d9d5f;
+    --green-soft: #c8f0d8;
+    --yellow: #f4a62a;
+    --yellow-soft: #fde8c0;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Manrope', -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    background: var(--pink-soft);
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border-right: 1px solid var(--border);
+  }
+  .logo-pekin {
+    width: 44px; height: 44px;
+    background: var(--ink);
+    color: var(--bg-accent);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 20px;
+    font-family: var(--mono);
+    margin-bottom: 20px;
+  }
+  .side-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-size: 20px;
+    color: var(--ink);
+  }
+  .side-icon:hover { background: rgba(0,0,0,0.08); }
+  .side-icon.active { background: rgba(168,224,99,0.5); }
+
+  .main {
+    background: var(--bg);
+    overflow: auto;
+  }
+
+  .hero {
+    background: var(--bg-accent);
+    padding: 48px 48px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 {
+    font-size: 64px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+    margin-bottom: 28px;
+  }
+  .hero h1 .small {
+    font-size: 36px;
+    font-weight: 600;
+    opacity: 0.5;
+    display: block;
+    margin-top: 6px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tab {
+    background: var(--panel);
+    border: 1px solid var(--ink);
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+    color: var(--ink);
+    font-family: var(--sans);
+  }
+  .tab:hover { background: #f4f4ee; }
+  .tab.active {
+    background: var(--pill);
+    color: var(--pill-text);
+  }
+  .tab-plus {
+    background: var(--panel);
+    border: 1px solid var(--ink);
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: default;
+  }
+  .tab-plus:hover { background: var(--panel); }
+
+  .content {
+    padding: 32px 48px 64px;
+  }
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .card-title small {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-2);
+    margin-bottom: 8px;
+  }
+  .field label small {
+    font-weight: 500;
+    color: var(--muted);
+    font-size: 12px;
+    margin-left: 6px;
+  }
+  .field-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2px;
+    transition: all 0.15s;
+  }
+  .field-row:focus-within {
+    border-color: var(--ink);
+    background: var(--panel);
+  }
+  input[type="number"] {
+    background: transparent;
+    border: none;
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    padding: 10px 14px;
+    width: 100%;
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-inner-spin-button { display: none; }
+
+  .unit {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    padding-right: 14px;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    background: var(--ink);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid var(--accent);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 16px; height: 16px;
+    background: var(--ink);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid var(--accent);
+  }
+
+  .result-hero {
+    background: var(--ink);
+    color: var(--bg-accent);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; right: -20%;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(168,224,99,0.25), transparent 70%);
+    pointer-events: none;
+  }
+  .result-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .result-hero-val {
+    font-family: var(--mono);
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .result-hero-val.small { font-size: 42px; }
+  .result-hero-label {
+    font-size: 12px;
+    margin-top: 10px;
+    opacity: 0.65;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+  }
+  .result-hero-val .cur {
+    font-size: 24px;
+    opacity: 0.6;
+    margin-left: 4px;
+    font-weight: 500;
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .metric-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .metric {
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    transition: border-color 0.15s;
+  }
+  .metric:hover { border-color: var(--ink); }
+  .metric-val {
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .metric-name {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  .metric.accent {
+    background: var(--bg-accent);
+    border-color: var(--accent-dark);
+  }
+  .metric.ink {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .metric.ink .metric-val { color: var(--bg-accent); }
+  .metric.ink .metric-name { color: rgba(216,240,200,0.65); }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  .status::before {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .status.green { background: var(--green-soft); color: var(--green); border-color: var(--green); }
+  .status.yellow { background: var(--yellow-soft); color: var(--yellow); border-color: var(--yellow); }
+  .status.red { background: var(--red-soft); color: var(--red); border-color: var(--red); }
+
+  .formula {
+    background: var(--ink);
+    color: #d0d0c8;
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.9;
+    margin-top: 16px;
+  }
+  .formula b { color: var(--accent); font-weight: 500; }
+
+  .tip {
+    display: flex;
+    gap: 12px;
+    background: var(--bg-accent);
+    border: 1px solid var(--accent-dark);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--ink-2);
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+  .tip.pink { background: var(--pink-soft); border-color: var(--pink); }
+  .tip.yellow { background: var(--yellow-soft); border-color: var(--yellow); }
+  .tip-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .tip b { font-weight: 700; color: var(--ink); }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-weight: 500;
+  }
+  .data-table td:first-child { font-family: var(--sans); font-weight: 500; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--panel-soft); }
+  .data-table tr.current td {
+    background: var(--bg-accent) !important;
+    font-weight: 700;
+  }
+
+  .gauge-wrap {
+    background: var(--panel-soft);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 14px;
+    border: 1px solid var(--border);
+  }
+  .gauge-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--muted);
+    font-family: var(--mono);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .gauge-track {
+    height: 10px;
+    background: var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+  }
+  .gauge-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+    background: linear-gradient(90deg, var(--green) 0%, var(--accent) 30%, var(--yellow) 60%, var(--red) 100%);
+  }
+  .gauge-marker {
+    position: absolute;
+    top: -4px;
+    width: 4px;
+    height: 18px;
+    background: var(--ink);
+    border-radius: 2px;
+    transform: translateX(-50%);
+    transition: left 0.3s ease;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+  }
+
+  .verdict-big {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-family: var(--sans);
+  }
+
+  @media (max-width: 1024px) {
+    .hero h1 { font-size: 48px; }
+    .hero h1 .small { font-size: 24px; }
+    .result-hero-val { font-size: 40px; }
+    .result-hero-val.small { font-size: 32px; }
+    .verdict-big { font-size: 36px; }
+  }
+
+  @media (max-width: 768px) {
+    .app { grid-template-columns: 64px 1fr; }
+    .sidebar { padding: 14px 0; }
+    .hero { padding: 28px 20px; }
+    .hero h1 { font-size: 36px; }
+    .hero h1 .small { font-size: 18px; }
+    .content { padding: 20px; }
+    .grid-2, .metric-grid.cols-3 { grid-template-columns: 1fr; }
+    .result-hero-grid { grid-template-columns: 1fr; gap: 16px; }
+    .result-hero-val { font-size: 36px; }
+    .tab { padding: 10px 16px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="logo-pekin">P</div>
+    <div class="side-icon active">⊞</div>
+    <div class="side-icon">▢</div>
+    <div class="side-icon">▣</div>
+    <div class="side-icon">◐</div>
+    <div class="side-icon">⎈</div>
+  </aside>
+
+  <main class="main">
+
+    <section class="hero">
+      <h1>
+        Рекламный калькулятор
+        <span class="small">WB · реальное время · Pekinski.ru</span>
+      </h1>
+
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab(event, 'converter')">⇄ CPC ↔ CPM</button>
+        <button class="tab" onclick="switchTab(event, 'cpo')">◎ CPO / ДРР</button>
+        <button class="tab" onclick="switchTab(event, 'keyword')">◇ Анализ ключа</button>
+        <button class="tab" onclick="switchTab(event, 'budget')">₽ Бюджет</button>
+        <button class="tab tab-plus">+</button>
+      </div>
+    </section>
+
+    <section class="content">
+
+      <!-- ===== TAB 1: CPC ↔ CPM ===== -->
+      <div class="page active" id="page-converter">
+        <div class="grid-2">
+          <div>
+            <div class="card">
+              <div class="card-title">Параметры кампании <small>ввод</small></div>
+
+              <div class="field">
+                <label>CPC — цена одного клика</label>
+                <div class="field-row">
+                  <input type="number" id="cpc" value="12" min="0.1" step="0.5" oninput="calcFromCPC()">
+                  <span class="unit">₽ / клик</span>
+                </div>
+                <input type="range" id="cpc_range" min="1" max="150" step="0.5" value="12" oninput="syncRange('cpc','cpc_range'); calcFromCPC()">
+              </div>
+
+              <div class="field">
+                <label>CTR — кликабельность карточки</label>
+                <div class="field-row">
+                  <input type="number" id="ctr" value="3.5" min="0.1" max="50" step="0.1" oninput="calcFromCPC()">
+                  <span class="unit">%</span>
+                </div>
+                <input type="range" id="ctr_range" min="0.5" max="20" step="0.1" value="3.5" oninput="syncRange('ctr','ctr_range'); calcFromCPC()">
+              </div>
+
+              <hr class="divider">
+
+              <div class="field">
+                <label>Или наоборот — введите CPM</label>
+                <div class="field-row">
+                  <input type="number" id="cpm_in" value="420" min="1" step="5" oninput="calcFromCPM()">
+                  <span class="unit">₽ / 1000 показов</span>
+                </div>
+                <input type="range" id="cpm_range" min="50" max="3000" step="5" value="420" oninput="syncRange('cpm_in','cpm_range'); calcFromCPM()">
+              </div>
+
+              <div class="formula">
+                <b>CPM</b> = CPC × CTR × 10<br>
+                <b>CPC</b> = CPM ÷ (CTR × 10)<br>
+                CTR в %. На 1000 показов кликов = CTR × 10
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:20px">
+              <div class="card-title">Нормы CTR по категориям WB</div>
+              <table class="data-table">
+                <thead><tr><th>Категория</th><th>Норма</th><th>Ваш</th></tr></thead>
+                <tbody id="ctr-bench">
+                  <tr><td>Одежда / Обувь</td><td>2–5%</td><td id="b1">—</td></tr>
+                  <tr><td>Товары для дома</td><td>3–7%</td><td id="b2">—</td></tr>
+                  <tr><td>Электроника</td><td>1.5–4%</td><td id="b3">—</td></tr>
+                  <tr><td>Детские товары</td><td>3–6%</td><td id="b4">—</td></tr>
+                  <tr><td>Красота / Здоровье</td><td>2–5%</td><td id="b5">—</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <div class="result-hero">
+              <div class="result-hero-grid">
+                <div>
+                  <div class="result-hero-val" id="out_cpm">420<span class="cur">₽</span></div>
+                  <div class="result-hero-label">CPM · за 1000 показов</div>
+                </div>
+                <div>
+                  <div class="result-hero-val small" id="out_cpc">12<span class="cur">₽</span></div>
+                  <div class="result-hero-label">CPC · за клик</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Что это даёт на практике</div>
+              <div class="metric-grid">
+                <div class="metric">
+                  <div class="metric-val" id="clicks_per_1k">35</div>
+                  <div class="metric-name">кликов с 1000 показов</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-val" id="shows_for_100">2 857</div>
+                  <div class="metric-name">показов для 100 кликов</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-val" id="cost_per_1k_clicks">12 000</div>
+                  <div class="metric-name">₽ за 1000 кликов</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-val" id="budget_1k_shows">420</div>
+                  <div class="metric-name">₽ на 1000 показов</div>
+                </div>
+              </div>
+
+              <hr class="divider">
+
+              <div class="card-title">Прогноз на тестовый бюджет</div>
+
+              <div class="field">
+                <label>Бюджет теста</label>
+                <div class="field-row">
+                  <input type="number" id="test_budget" value="5000" min="100" step="500" oninput="calcForecast()">
+                  <span class="unit">₽</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Конверсия клик → заказ</label>
+                <div class="field-row">
+                  <input type="number" id="cr_order" value="5" min="0.1" max="50" step="0.1" oninput="calcForecast()">
+                  <span class="unit">%</span>
+                </div>
+              </div>
+
+              <div class="metric-grid cols-3" style="margin-top:14px">
+                <div class="metric">
+                  <div class="metric-val" id="f_shows">—</div>
+                  <div class="metric-name">показов</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-val" id="f_clicks">—</div>
+                  <div class="metric-name">кликов</div>
+                </div>
+                <div class="metric accent">
+                  <div class="metric-val" id="f_orders">—</div>
+                  <div class="metric-name">заказов</div>
+                </div>
+              </div>
+              <div class="metric ink" style="margin-top:10px">
+                <div class="metric-val" id="f_cpo">—</div>
+                <div class="metric-name">₽ CPO — стоимость одного заказа</div>
+              </div>
+            </div>
+
+            <div class="tip pink">
+              <span class="tip-icon">⚡</span>
+              <div><b>CPC-кампании WB скрывают статистику по ключам.</b> В 2025–2026 используйте CPM как основной формат — полный контроль через EVIRMA, Sellego или НейроМаркет.</div>
+            </div>
+
+            <div class="tip">
+              <span class="tip-icon">🎯</span>
+              <div><b>CTR сильно зависит от позиции.</b> ТОП-1–3: 5–15%. Позиции 10–20: 1–3%. Оценивайте CTR в разрезе позиции и кластера, а не в среднем по кампании.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB 2: CPO / ДРР ===== -->
+      <div class="page" id="page-cpo">
+        <div class="grid-2">
+          <div>
+            <div class="card">
+              <div class="card-title">Юнит-экономика товара</div>
+
+              <div class="field">
+                <label>Цена продавца до СПП</label>
+                <div class="field-row">
+                  <input type="number" id="price" value="2500" min="1" step="50" oninput="calcCPO()">
+                  <span class="unit">₽</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>СПП — скидка Wildberries</label>
+                <div class="field-row">
+                  <input type="number" id="spp" value="20" min="0" max="60" step="1" oninput="calcCPO()">
+                  <span class="unit">%</span>
+                </div>
+                <input type="range" id="spp_range" min="0" max="50" step="1" value="20" oninput="syncRange('spp','spp_range'); calcCPO()">
+              </div>
+              <div class="field">
+                <label>Комиссия WB по категории</label>
+                <div class="field-row">
+                  <input type="number" id="wb_comm" value="23" min="1" max="40" step="0.5" oninput="calcCPO()">
+                  <span class="unit">%</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Логистика + эквайринг + обратка</label>
+                <div class="field-row">
+                  <input type="number" id="logistics" value="180" min="0" step="10" oninput="calcCPO()">
+                  <span class="unit">₽</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Себестоимость с фулфилментом</label>
+                <div class="field-row">
+                  <input type="number" id="cost" value="600" min="0" step="50" oninput="calcCPO()">
+                  <span class="unit">₽</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Налог (УСН)</label>
+                <div class="field-row">
+                  <input type="number" id="tax" value="6" min="0" max="20" step="0.5" oninput="calcCPO()">
+                  <span class="unit">%</span>
+                </div>
+              </div>
+
+              <hr class="divider">
+              <div class="card-title">Данные рекламы за период</div>
+
+              <div class="field">
+                <label>Расходы на рекламу</label>
+                <div class="field-row">
+                  <input type="number" id="ad_spend" value="50000" min="0" step="1000" oninput="calcCPO()">
+                  <span class="unit">₽</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Количество заказов за период</label>
+                <div class="field-row">
+                  <input type="number" id="orders" value="200" min="1" step="10" oninput="calcCPO()">
+                  <span class="unit">шт</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="result-hero">
+              <div class="result-hero-grid">
+                <div>
+                  <div class="result-hero-val" id="cpo_result">—<span class="cur">₽</span></div>
+                  <div class="result-hero-label">CPO · стоимость заказа</div>
+                </div>
+                <div>
+                  <div class="result-hero-val" id="drr_result">—</div>
+                  <div class="result-hero-label">ДРР · доля расходов</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="drr_status_wrap" style="margin-bottom:16px"></div>
+
+            <div class="card">
+              <div class="card-title">Экономика единицы товара</div>
+
+              <div class="metric-grid">
+                <div class="metric">
+                  <div class="metric-val" id="buyer_price">—</div>
+                  <div class="metric-name">₽ цена для покупателя</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-val" id="revenue">—</div>
+                  <div class="metric-name">₽ выручка продавца</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-val" id="wb_comm_rub">—</div>
+                  <div class="metric-name">₽ комиссия WB</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-val" id="profit_no_ads">—</div>
+                  <div class="metric-name">₽ прибыль без рекламы</div>
+                </div>
+                <div class="metric accent">
+                  <div class="metric-val" id="profit_with_ads">—</div>
+                  <div class="metric-name">₽ прибыль с рекламой</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-val" id="margin_pct">—</div>
+                  <div class="metric-name">% маржинальность</div>
+                </div>
+              </div>
+
+              <hr class="divider">
+              <div class="card-title">Точка безубыточности</div>
+
+              <div style="font-family: var(--mono); font-size: 38px; font-weight: 700; color: var(--ink); line-height: 1">
+                <span id="break_drr">—</span>
+              </div>
+              <div style="font-size: 12px; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600">
+                максимальный ДРР при нулевой прибыли
+              </div>
+
+              <div class="gauge-wrap">
+                <div class="gauge-labels">
+                  <span>0%</span><span>15%</span><span>30%</span><span>50%+</span>
+                </div>
+                <div class="gauge-track">
+                  <div class="gauge-fill" id="drr_gauge" style="width:0%"></div>
+                  <div class="gauge-marker" id="drr_marker" style="left:0%"></div>
+                </div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 8px; font-family: var(--mono)">
+                  ↑ ваш ДРР на шкале · заливка = точка безубыточности
+                </div>
+              </div>
+            </div>
+
+            <div class="tip">
+              <span class="tip-icon">📌</span>
+              <div><b>ДРР считается от выручки ПОСЛЕ СПП</b> (цена для покупателя). Частая ошибка — считать от цены до СПП и получать заниженный ДРР.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB 3: АНАЛИЗ КЛЮЧА ===== -->
+      <div class="page" id="page-keyword">
+        <div class="grid-2">
+          <div>
+            <div class="card">
+              <div class="card-title">Параметры ключевой фразы</div>
+
+              <div class="field">
+                <label>Ставка CPM по ключу</label>
+                <div class="field-row">
+                  <input type="number" id="k_cpm" value="350" min="10" step="10" oninput="calcKeyword()">
+                  <span class="unit">₽ / 1000</span>
+                </div>
+                <input type="range" id="k_cpm_range" min="50" max="3000" step="10" value="350" oninput="syncRange('k_cpm','k_cpm_range'); calcKeyword()">
+              </div>
+              <div class="field">
+                <label>CTR — кликабельность ключа</label>
+                <div class="field-row">
+                  <input type="number" id="k_ctr" value="4" min="0.1" max="50" step="0.1" oninput="calcKeyword()">
+                  <span class="unit">%</span>
+                </div>
+                <input type="range" id="k_ctr_range" min="0.5" max="20" step="0.1" value="4" oninput="syncRange('k_ctr','k_ctr_range'); calcKeyword()">
+              </div>
+              <div class="field">
+                <label>CRF — конверсия показ → заказ <small>из Джем за 30 дн.</small></label>
+                <div class="field-row">
+                  <input type="number" id="k_crf" value="0.3" min="0.01" max="20" step="0.05" oninput="calcKeyword()">
+                  <span class="unit">%</span>
+                </div>
+                <input type="range" id="k_crf_range" min="0.05" max="5" step="0.05" value="0.3" oninput="syncRange('k_crf','k_crf_range'); calcKeyword()">
+              </div>
+              <div class="field">
+                <label>Выручка с одного заказа</label>
+                <div class="field-row">
+                  <input type="number" id="k_price" value="2500" min="100" step="50" oninput="calcKeyword()">
+                  <span class="unit">₽</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Целевая стоимость заказа</label>
+                <div class="field-row">
+                  <input type="number" id="k_target_cpo" value="400" min="10" step="10" oninput="calcKeyword()">
+                  <span class="unit">₽</span>
+                </div>
+              </div>
+
+              <div class="formula">
+                <b>CPO</b> = CPM ÷ (CRF × 10)<br>
+                <b>Выручка/1000 показов</b> = Чек × CRF ÷ 100 × 1000<br>
+                <b>Заказов с 1000 показов</b> = CRF × 10<br>
+                CRF — конверсия показ→заказ, уже включает CTR
+              </div>
+
+              <div class="tip pink" style="margin-top:16px">
+                <span class="tip-icon">📖</span>
+                <div><b>CRF на WB обычно 0.1–2%.</b> Смотрите в Джем за 30 дней по артикулу. Ниже 0.2% — ключ слабый. Выше 1% — золотой. Перед отключением ключа — минимум 100–200 показов статистики.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="result-hero">
+              <div class="result-hero-grid">
+                <div>
+                  <div class="result-hero-val" id="k_cpo_out">—<span class="cur">₽</span></div>
+                  <div class="result-hero-label">CPO · цена заказа по ключу</div>
+                </div>
+                <div>
+                  <div class="verdict-big" id="k_verdict" style="color: var(--bg-accent); margin-top: 8px">—</div>
+                  <div class="result-hero-label">вердикт по ключу</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="k_status_wrap" style="margin-bottom:16px"></div>
+
+            <div class="card">
+              <div class="card-title">Показатели ключа</div>
+
+              <div class="metric-grid">
+                <div class="metric accent">
+                  <div class="metric-val" id="k_rpm">—</div>
+                  <div class="metric-name">₽ выручка на 1000 показов</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-val" id="k_o1000">—</div>
+                  <div class="metric-name">заказов с 1000 показов</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-val" id="k_romi">—</div>
+                  <div class="metric-name">% возврат на рекламу</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-val" id="k_max_cpm">—</div>
+                  <div class="metric-name">₽ макс. ставка при цели</div>
+                </div>
+              </div>
+
+              <hr class="divider">
+              <div class="card-title">Прогноз на 10 000 показов</div>
+
+              <table class="data-table">
+                <thead><tr><th>Метрика</th><th>Значение</th></tr></thead>
+                <tbody>
+                  <tr><td>Показы</td><td><b>10 000</b></td></tr>
+                  <tr><td>Клики</td><td><b id="sim_clicks">—</b></td></tr>
+                  <tr><td>Заказы</td><td><b id="sim_orders">—</b></td></tr>
+                  <tr><td>Расход на рекламу</td><td><b id="sim_spend">—</b> ₽</td></tr>
+                  <tr><td>Выручка (прогноз)</td><td><b id="sim_rev">—</b> ₽</td></tr>
+                  <tr><td>Стоимость заказа</td><td><b id="sim_cpo">—</b> ₽</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="tip">
+              <span class="tip-icon">⚡</span>
+              <div><b>Выручка на 1000 показов &gt; CPM</b> → ключ зарабатывает. Режьте ключи, где ставка превышает выручку на 1000 показов × 0.8.</div>
+            </div>
+
+            <div class="tip yellow">
+              <span class="tip-icon">🔴</span>
+              <div><b>Перед добавлением фразы в минус</b> — проверьте через Сканер Кластеров НейроМаркет. Объединяющая фраза может убить весь кластер и минус 700 000 показов.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB 4: БЮДЖЕТ ===== -->
+      <div class="page" id="page-budget">
+        <div class="grid-2">
+          <div>
+            <div class="card">
+              <div class="card-title">Цель и входные данные</div>
+
+              <div class="field">
+                <label>Цель: заказов в месяц</label>
+                <div class="field-row">
+                  <input type="number" id="b_target_orders" value="500" min="1" step="10" oninput="calcBudget()">
+                  <span class="unit">шт</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Целевая стоимость заказа (CPO)</label>
+                <div class="field-row">
+                  <input type="number" id="b_cpo" value="350" min="10" step="10" oninput="calcBudget()">
+                  <span class="unit">₽</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Средняя ставка CPM</label>
+                <div class="field-row">
+                  <input type="number" id="b_cpm" value="400" min="10" step="10" oninput="calcBudget()">
+                  <span class="unit">₽ / 1000</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Средний CTR по кампании</label>
+                <div class="field-row">
+                  <input type="number" id="b_ctr" value="3.5" min="0.1" max="30" step="0.1" oninput="calcBudget()">
+                  <span class="unit">%</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Конверсия клик → заказ</label>
+                <div class="field-row">
+                  <input type="number" id="b_cr" value="5" min="0.1" max="50" step="0.1" oninput="calcBudget()">
+                  <span class="unit">%</span>
+                </div>
+              </div>
+              <div class="field">
+                <label>Выручка с одного заказа</label>
+                <div class="field-row">
+                  <input type="number" id="b_revenue" value="2500" min="100" step="50" oninput="calcBudget()">
+                  <span class="unit">₽</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="tip" style="margin-top:20px">
+              <span class="tip-icon">🚀</span>
+              <div><b>Связка запуска нового товара:</b> День 1 — ручная РК на поиск с высокой ставкой (сбор кластеров). Дни 2–3 — чистка нерелевантных. Дни 3–7 — снижение ставки до рабочей. После первых органических позиций (ТОП-200–300) — подключение рекомендательных полок.</div>
+            </div>
+          </div>
+
+          <div>
+            <div class="result-hero">
+              <div class="result-hero-grid">
+                <div>
+                  <div class="result-hero-val" id="b_budget">—<span class="cur">₽</span></div>
+                  <div class="result-hero-label">бюджет в месяц</div>
+                </div>
+                <div>
+                  <div class="result-hero-val small" id="b_daily">—<span class="cur">₽</span></div>
+                  <div class="result-hero-label">в день</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title">Воронка кампании</div>
+
+              <div class="metric-grid">
+                <div class="metric">
+                  <div class="metric-val" id="b_shows">—</div>
+                  <div class="metric-name">показов в месяц</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-val" id="b_clicks_need">—</div>
+                  <div class="metric-name">кликов в месяц</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-val" id="b_drr_plan">—</div>
+                  <div class="metric-name">% плановый ДРР</div>
+                </div>
+                <div class="metric accent">
+                  <div class="metric-val" id="b_revenue_month">—</div>
+                  <div class="metric-name">₽ выручка за месяц</div>
+                </div>
+              </div>
+
+              <hr class="divider">
+              <div class="card-title">Бюджет по сценариям ДРР</div>
+
+              <table class="data-table">
+                <thead>
+                  <tr><th>Оценка</th><th>ДРР</th><th>Бюджет/мес</th></tr>
+                </thead>
+                <tbody id="scenario_table"></tbody>
+              </table>
+            </div>
+
+            <div class="tip pink">
+              <span class="tip-icon">💡</span>
+              <div><b>Минимум 5 000–10 000 ₽ / 3 дня на тест.</b> Первые 2–3 дня РК собирает кластеры, ДРР 50–200% на старте — это нормально. Не принимайте решения раньше.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<script>
+// ===== UTILS =====
+function fmt(n, dec=0) {
+  if (isNaN(n) || !isFinite(n)) return '—';
+  if (dec > 0 && n < 100) return n.toFixed(dec);
+  return Math.round(n).toLocaleString('ru-RU').replace(/,/g, ' ');
+}
+function pct(n, dec=1) {
+  return isNaN(n) || !isFinite(n) ? '—' : n.toFixed(dec) + '%';
+}
+function val(id) {
+  return parseFloat(document.getElementById(id).value) || 0;
+}
+function set(id, v) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = v;
+}
+function syncRange(numId, rangeId) {
+  const n = document.getElementById(numId), r = document.getElementById(rangeId);
+  if (!n || !r) return;
+  if (document.activeElement === r) n.value = r.value;
+  else r.value = n.value;
+}
+function statusBadge(text, cls) {
+  return `<div class="status ${cls}">${text}</div>`;
+}
+
+// ===== TABS =====
+function switchTab(e, name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  e.target.closest('.tab').classList.add('active');
+  document.getElementById('page-' + name).classList.add('active');
+}
+
+// ===== TAB 1: CPC ↔ CPM =====
+// Проверка формулы: CPC=10₽, CTR=5% → CPM = 10 × 5 × 10 = 500₽
+// На 1000 показов: кликов = 5% × 1000 = 50. Стоимость 50 × 10 = 500₽ ✓
+function calcFromCPC() {
+  const cpc = val('cpc'), ctr = val('ctr');
+  document.getElementById('cpc_range').value = cpc;
+  document.getElementById('ctr_range').value = ctr;
+  const cpm = cpc * ctr * 10;
+  document.getElementById('cpm_in').value = cpm.toFixed(0);
+  document.getElementById('cpm_range').value = cpm.toFixed(0);
+  updateConverter(cpm, cpc, ctr);
+}
+function calcFromCPM() {
+  const cpm = val('cpm_in'), ctr = val('ctr');
+  document.getElementById('cpm_range').value = cpm;
+  const cpc = ctr > 0 ? cpm / (ctr * 10) : 0;
+  document.getElementById('cpc').value = cpc.toFixed(2);
+  document.getElementById('cpc_range').value = cpc.toFixed(2);
+  updateConverter(cpm, cpc, ctr);
+}
+function updateConverter(cpm, cpc, ctr) {
+  set('out_cpm', fmt(cpm) + '<span class="cur">₽</span>');
+  set('out_cpc', fmt(cpc, 2) + '<span class="cur">₽</span>');
+  const clicksPer1k = ctr * 10;
+  set('clicks_per_1k', fmt(clicksPer1k, clicksPer1k < 10 ? 1 : 0));
+  set('shows_for_100', ctr > 0 ? fmt(100 / (ctr / 100)) : '—');
+  set('cost_per_1k_clicks', fmt(cpc * 1000));
+  set('budget_1k_shows', fmt(cpm));
+
+  const benchRanges = [[2, 5], [3, 7], [1.5, 4], [3, 6], [2, 5]];
+  for (let i = 1; i <= 5; i++) {
+    const [lo, hi] = benchRanges[i - 1];
+    const el = document.getElementById('b' + i);
+    if (!el) continue;
+    if (ctr < lo) el.innerHTML = '<span style="color:var(--red)">↓ ниже</span>';
+    else if (ctr > hi) el.innerHTML = '<span style="color:var(--green)">↑ выше</span>';
+    else el.innerHTML = '<span style="color:var(--green)">✓ норма</span>';
+  }
+  calcForecast();
+}
+function calcForecast() {
+  const cpm = val('cpm_in'), ctr = val('ctr'), budget = val('test_budget'), cr = val('cr_order');
+  const shows = cpm > 0 ? (budget / cpm) * 1000 : 0;
+  const clicks = shows * (ctr / 100);
+  const orders = clicks * (cr / 100);
+  const cpo = orders > 0 ? budget / orders : 0;
+  set('f_shows', fmt(shows));
+  set('f_clicks', fmt(clicks));
+  set('f_orders', orders < 10 ? fmt(orders, 1) : fmt(orders));
+  set('f_cpo', fmt(cpo));
+}
+
+// ===== TAB 2: CPO / ДРР =====
+// CPO = Расход / Заказы
+// Выручка для ДРР = заказы × цена_для_покупателя (цена с СПП)
+// ДРР = Расход / Выручка × 100%
+// Break-even ДРР = (прибыль без рекламы / цена покупателя) × 100%
+function calcCPO() {
+  const price = val('price');
+  const spp = val('spp');
+  const comm = val('wb_comm');
+  const log = val('logistics');
+  const cost = val('cost');
+  const tax = val('tax');
+  const adSpend = val('ad_spend');
+  const orders = val('orders');
+
+  document.getElementById('spp_range').value = spp;
+
+  const buyerPrice = price * (1 - spp / 100);
+  const revenue = price;  // выручка продавца (до СПП)
+  // Комиссия WB считается от цены для покупателя (после СПП)
+  const commRub = buyerPrice * comm / 100;
+  const taxRub = revenue * tax / 100;
+  const profitNoAds = revenue - commRub - log - cost - taxRub;
+
+  const cpo = orders > 0 ? adSpend / orders : 0;
+  // ДРР от выручки ПОСЛЕ СПП (как видит покупатель)
+  const totalRevForDRR = orders * buyerPrice;
+  const drr = totalRevForDRR > 0 ? (adSpend / totalRevForDRR * 100) : 0;
+  const profitWithAds = profitNoAds - cpo;
+  const margin = revenue > 0 ? (profitWithAds / revenue * 100) : 0;
+  const breakDRR = buyerPrice > 0 ? (profitNoAds / buyerPrice * 100) : 0;
+
+  set('cpo_result', fmt(cpo) + '<span class="cur">₽</span>');
+  set('drr_result', pct(drr));
+  set('buyer_price', fmt(buyerPrice));
+  set('revenue', fmt(revenue));
+  set('wb_comm_rub', fmt(commRub));
+  set('profit_no_ads', fmt(profitNoAds));
+  set('profit_with_ads', fmt(profitWithAds));
+  set('margin_pct', pct(margin));
+  set('break_drr', pct(breakDRR));
+
+  let drrCls = 'green', drrLabel = 'ДРР в норме';
+  if (!isFinite(drr) || orders === 0) { drrCls = 'yellow'; drrLabel = 'введите данные'; }
+  else if (drr > 30) { drrCls = 'red'; drrLabel = 'ДРР критический — стоп'; }
+  else if (breakDRR > 0 && drr > breakDRR) { drrCls = 'red'; drrLabel = 'ДРР выше точки безубыточности'; }
+  else if (drr > 15) { drrCls = 'yellow'; drrLabel = 'ДРР высокий'; }
+  else if (drr > 10) { drrCls = 'yellow'; drrLabel = 'ДРР приемлемый'; }
+  set('drr_status_wrap', statusBadge(`${pct(drr)} · ${drrLabel}`, drrCls));
+
+  const markerPos = Math.min(Math.max(drr, 0), 50) / 50 * 100;
+  const gaugeFill = Math.min(Math.max(breakDRR, 0), 50) / 50 * 100;
+  const marker = document.getElementById('drr_marker');
+  const gauge = document.getElementById('drr_gauge');
+  if (marker) marker.style.left = markerPos + '%';
+  if (gauge) gauge.style.width = gaugeFill + '%';
+}
+
+// ===== TAB 3: АНАЛИЗ КЛЮЧА =====
+// ИСПРАВЛЕНО: CRF — это конверсия показ→заказ (уже учитывает CTR)
+// Заказов с 1000 показов = 1000 × CRF/100 = CRF × 10
+// CPO = CPM / заказов_на_1000 = CPM / (CRF × 10)
+// Проверка: CPM=350, CRF=0.3% → CPO = 350 / 3 = 116.7₽
+// 1000 показов стоят 350₽, дают 3 заказа → 350/3 = 116.7 ✓
+function calcKeyword() {
+  const cpm = val('k_cpm'), ctr = val('k_ctr'), crf = val('k_crf');
+  const price = val('k_price'), targetCPO = val('k_target_cpo');
+  document.getElementById('k_cpm_range').value = cpm;
+  document.getElementById('k_ctr_range').value = ctr;
+  document.getElementById('k_crf_range').value = crf;
+
+  const cpo = crf > 0 ? cpm / (crf * 10) : 0;
+  // Выручка на 1000 показов: (CRF/100) × 1000 × цена = CRF × 10 × цена / 1? 
+  // Точно: 1000 показов → 1000 × 0.003 = 3 заказа → 3 × 2500 = 7500₽
+  const rpm = (crf / 100) * 1000 * price;
+  const o1000 = crf * 10;  // заказов с 1000 показов
+  // ROMI: сколько возвращается с каждого рубля рекламы. (RPM - CPM) / CPM × 100
+  const romi = cpm > 0 ? (rpm - cpm) / cpm * 100 : 0;
+  // Максимальная CPM: при которой CPO = целевой
+  // targetCPO = maxCPM / (CRF × 10) → maxCPM = targetCPO × CRF × 10
+  const maxCPM = targetCPO * crf * 10;
+
+  set('k_cpo_out', fmt(cpo) + '<span class="cur">₽</span>');
+  set('k_rpm', fmt(rpm));
+  set('k_o1000', o1000.toFixed(2));
+  set('k_romi', pct(romi));
+  set('k_max_cpm', fmt(maxCPM));
+
+  let verdict = '—', cls = 'yellow', verdictColor = '#fde8c0';
+  if (cpo > 0 && isFinite(cpo)) {
+    if (cpo <= targetCPO * 0.6) { verdict = 'Топ'; cls = 'green'; verdictColor = '#a8e063'; }
+    else if (cpo <= targetCPO) { verdict = 'Ок'; cls = 'green'; verdictColor = '#c8f0d8'; }
+    else if (cpo <= targetCPO * 1.5) { verdict = 'Дорого'; cls = 'yellow'; verdictColor = '#fde8c0'; }
+    else { verdict = 'Резать'; cls = 'red'; verdictColor = '#ffd9dc'; }
+  }
+  const vEl = document.getElementById('k_verdict');
+  if (vEl) { vEl.textContent = verdict; vEl.style.color = verdictColor; }
+
+  let statusText = `Заказ ${fmt(cpo)}₽ · цель ${fmt(targetCPO)}₽`;
+  if (rpm > cpm * 1.3) statusText += ` · окупается ×${(rpm/cpm).toFixed(1)}`;
+  else if (rpm < cpm * 0.8 && rpm > 0) statusText += ` · убыточный`;
+  set('k_status_wrap', statusBadge(statusText, cls));
+
+  const shows10k = 10000;
+  const clicks10k = shows10k * ctr / 100;
+  const orders10k = shows10k * crf / 100;
+  const spend10k = cpm * shows10k / 1000;
+  const rev10k = orders10k * price;
+  set('sim_clicks', fmt(clicks10k));
+  set('sim_orders', orders10k < 10 ? fmt(orders10k, 1) : fmt(orders10k));
+  set('sim_spend', fmt(spend10k));
+  set('sim_rev', fmt(rev10k));
+  set('sim_cpo', fmt(cpo));
+}
+
+// ===== TAB 4: БЮДЖЕТ =====
+// Бюджет = цель_заказов × целевой_CPO
+// Клики = заказы / (CR/100)
+// Показы = клики / (CTR/100)
+// ДРР плановый = бюджет / (заказы × чек) × 100%
+function calcBudget() {
+  const targetOrders = val('b_target_orders');
+  const cpo = val('b_cpo');
+  const cpm = val('b_cpm');
+  const ctr = val('b_ctr');
+  const cr = val('b_cr');
+  const revenue = val('b_revenue');
+
+  const budget = targetOrders * cpo;
+  const daily = budget / 30;
+  const clicksNeed = cr > 0 ? targetOrders / (cr / 100) : 0;
+  const showsNeed = ctr > 0 ? clicksNeed / (ctr / 100) : 0;
+  const totalRevenue = targetOrders * revenue;
+  const drr = totalRevenue > 0 ? budget / totalRevenue * 100 : 0;
+
+  set('b_budget', fmt(budget) + '<span class="cur">₽</span>');
+  set('b_daily', fmt(daily) + '<span class="cur">₽</span>');
+  set('b_shows', fmt(showsNeed));
+  set('b_clicks_need', fmt(clicksNeed));
+  set('b_drr_plan', pct(drr));
+  set('b_revenue_month', fmt(totalRevenue));
+
+  const scenarios = [
+    { drr: 5, label: 'Топ', cls: 'green', tag: '✓' },
+    { drr: 10, label: 'Комфортный', cls: 'green', tag: '✓' },
+    { drr: 15, label: 'Допустимый', cls: 'yellow', tag: '⚠' },
+    { drr: 20, label: 'Тревожный', cls: 'yellow', tag: '⚠' },
+    { drr: 30, label: 'Критический', cls: 'red', tag: '✗' }
+  ];
+  const currentDRR = Math.round(drr);
+  const rows = scenarios.map(s => {
+    const b = totalRevenue * s.drr / 100;
+    const isCurrent = Math.abs(s.drr - currentDRR) <= 2;
+    const color = s.cls === 'green' ? 'var(--green)' : s.cls === 'yellow' ? 'var(--yellow)' : 'var(--red)';
+    return `<tr class="${isCurrent ? 'current' : ''}">
+      <td>${s.tag} ${s.label}</td>
+      <td style="color:${color}; font-weight:700">${s.drr}%</td>
+      <td><b>${fmt(b)} ₽</b></td>
+    </tr>`;
+  }).join('');
+  set('scenario_table', rows);
+}
+
+// ===== INIT =====
+calcFromCPC();
+calcCPO();
+calcKeyword();
+calcBudget();
+</script>
+</body>
+</html>
